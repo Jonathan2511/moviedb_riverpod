@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moviedb_riverpod/providers/search_provider.dart';
@@ -14,9 +15,7 @@ class SearchPage extends ConsumerWidget {
     final searchNotifier = ref.read(searchResultsProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Movies'),
-      ),
+      appBar: AppBar(title: const Text('Search Movies')),
       body: Column(
         children: [
           Padding(
@@ -39,26 +38,51 @@ class SearchPage extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: searchQuery.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Start typing to search movies',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : searchResults.isEmpty
+            child:
+                searchQuery.isEmpty
                     ? const Center(
-                        child: Text(
-                          'No movies found',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: searchResults.length,
-                        itemBuilder: (context, index) {
-                          return MovieCard(movie: searchResults[index]);
-                        },
+                      child: Text(
+                        'Start typing to search movies',
+                        style: TextStyle(color: Colors.grey),
                       ),
+                    )
+                    : searchResults.isEmpty
+                    ? const Center(
+                      child: Text(
+                        'No movies found',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                    : ListView.builder(
+                      itemCount: searchResults.length,
+                      itemBuilder: (context, index) {
+                        final movieCard = MovieCard(
+                          movie: searchResults[index],
+                        );
+                        if (index == 0) {
+                          log('Build Search Result');
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            log('Finish Search Result');
+                          });
+                        }
+                        return movieCard;
+                      },
+                    ),
+            // : SingleChildScrollView(
+            //   child: Builder(
+            //     builder: (context) {
+            //       log('Build Search Result');
+            //       final cards =
+            //           searchResults
+            //               .map((movie) => MovieCard(movie: movie))
+            //               .toList();
+            //       WidgetsBinding.instance.addPostFrameCallback((_) {
+            //         log('Finish Search Result');
+            //       });
+            //       return Column(children: cards);
+            //     },
+            //   ),
+            // ),
           ),
         ],
       ),

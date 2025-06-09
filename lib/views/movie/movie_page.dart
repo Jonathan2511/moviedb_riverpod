@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moviedb_riverpod/views/movie/component/movie_card.dart';
@@ -35,25 +36,45 @@ class MoviePage extends ConsumerWidget {
           ),
         ],
       ),
-      body: movies.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: () async {
-                await moviesNotifier.fetchMovies(movies.length);
-              },
-              child: ListView.builder(
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  return MovieCard(movie: movies[index]);
+      body:
+          movies.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                onRefresh: () async {
+                  await moviesNotifier.fetchMovies(movies.length);
                 },
+                child: ListView.builder(
+                  itemCount: movies.length,
+                  itemBuilder: (context, index) {
+                    final movieCard = MovieCard(movie: movies[index]);
+                    if (index == 4) {
+                      log('Build Movie');
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        log('Finish Build Movie');
+                      });
+                    }
+                    return movieCard;
+                  },
+                ),
+                // child: SingleChildScrollView(
+                //   child: Column(
+                //     children:
+                //         movies.asMap().entries.map((entry) {
+                //           final index = entry.key;
+                //           final movie = entry.value;
+                //           if (index == 0) {
+                //             log('Build Movie');
+                //           }
+                //           if (index == movies.length - 1) {
+                //             WidgetsBinding.instance.addPostFrameCallback((_) {
+                //               log('Finish Build Movie');
+                //             });
+                //           }
+                //           return MovieCard(movie: movie);
+                //         }).toList(),
+                //   ),
+                // ),
               ),
-              // child: SingleChildScrollView(
-              //   child: Column(
-              //     children:
-              //         movies.map((movie) => MovieCard(movie: movie)).toList(),
-              //   ),
-              // ),
-            ),
     );
   }
 }
