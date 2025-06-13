@@ -4,10 +4,11 @@ import '../models/movie_model.dart';
 
 final movieServiceProvider = Provider((ref) => MovieService());
 
-final moviesProvider =
-    StateNotifierProvider<MoviesNotifier, List<Movie>>((ref) {
+final moviesProvider = StateNotifierProvider<MoviesNotifier, List<Movie>>((
+  ref,
+) {
   final notifier = MoviesNotifier(ref);
-  notifier.fetchMovies(1000); // Default fetch 20 movies saat provider dibuat
+  notifier.fetchMovies(20); // Default fetch 20 movies saat provider dibuat
   return notifier;
 });
 
@@ -27,8 +28,9 @@ class MoviesNotifier extends StateNotifier<List<Movie>> {
       List<Movie> allMovies = [];
       try {
         for (int page = 1; page <= maxPage; page++) {
-          final movies =
-              await _ref.read(movieServiceProvider).fetchMovies(page: page);
+          final movies = await _ref
+              .read(movieServiceProvider)
+              .fetchMovies(page: page);
           allMovies.addAll(movies);
         }
       } catch (e) {
@@ -42,8 +44,9 @@ class MoviesNotifier extends StateNotifier<List<Movie>> {
       List<Movie> allMovies = [];
       try {
         for (int page = 1; page <= maxPage; page++) {
-          final movies =
-              await _ref.read(movieServiceProvider).fetchMovies(page: page);
+          final movies = await _ref
+              .read(movieServiceProvider)
+              .fetchMovies(page: page);
           allMovies.addAll(movies);
         }
       } catch (e) {
